@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'ReSource Pro - Sales Executive Dashboard',
-  description: 'Dynamic sales executive dashboard with real-time data integration',
+  description: 'Sales executive dashboard with Writer Playbook and Outlook integration',
 }
 
 export default function RootLayout({

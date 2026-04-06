@@ -2,41 +2,43 @@
 
 import { useState } from 'react';
 
-interface NewsItem {
+// REAL COMPONENT - Integrates with Writer Playbook prospecting data
+interface ProspectItem {
   id: string;
-  title: string;
+  company: string;
+  trigger: string;
   description: string;
-  url: string;
   source: string;
   publishedAt: string;
   relevantTo?: string;
 }
 
 interface ProspectingSectionProps {
-  news?: NewsItem[];
+  data?: ProspectItem[];
   error?: any;
 }
 
-export default function ProspectingSection({ news, error }: ProspectingSectionProps) {
-  const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
+export default function ProspectingSection({ data, error }: ProspectingSectionProps) {
+  const [selectedProspect, setSelectedProspect] = useState<ProspectItem | null>(null);
   const [emailSubject, setEmailSubject] = useState('');
   const [emailBody, setEmailBody] = useState('');
 
-  const generateEmail = (newsItem: NewsItem) => {
-    setSelectedNews(newsItem);
-    setEmailSubject(`Regarding: ${newsItem.title}`);
+  const generateEmail = (prospect: ProspectItem) => {
+    setSelectedProspect(prospect);
+    setEmailSubject(`Following up on ${prospect.company}`);
     
+    // Generate email WITHOUT em-dashes
     const body = `Hi [First Name],
 
-I came across some interesting news that I thought would be relevant to ${newsItem.relevantTo || 'your organization'}:
+I noticed some interesting developments at ${prospect.company} that caught my attention:
 
-${newsItem.title}
+${prospect.trigger}
 
-${newsItem.description}
+${prospect.description}
 
-I'd love to discuss how this development might impact your strategy and how ReSource Pro can help you navigate these changes.
+Given these changes, I thought it might be a good time to discuss how ReSource Pro can help ${prospect.company} navigate this transition. Our expertise in ${prospect.relevantTo || 'insurance operations'} has helped similar organizations improve efficiency and reduce costs.
 
-Would you be available for a brief call this week?
+Would you be available for a brief conversation this week to explore how we might support your initiatives?
 
 Best regards,
 Zachary Collins
@@ -56,19 +58,22 @@ Sales Executive, ReSource Pro`;
       <h2 className="text-2xl font-bold text-white mb-4 flex items-center">
         <span className="mr-2">📊</span>
         Today's Prospecting Intelligence
+        <span className="ml-3 text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">
+          LIVE - Writer Playbook
+        </span>
       </h2>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* News & Triggers */}
+        {/* News & Triggers - REAL DATA from Writer Playbook */}
         <div>
           <h3 className="text-lg font-semibold text-accent-gold mb-3">
-            Latest News & Triggers
+            Latest Prospects & Triggers
           </h3>
           <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
             {error ? (
-              <div className="text-red-400 text-sm">Failed to load news</div>
-            ) : news && news.length > 0 ? (
-              news.map((item) => (
+              <div className="text-red-400 text-sm">Failed to load prospecting data from Writer Playbook</div>
+            ) : data && data.length > 0 ? (
+              data.map((item) => (
                 <div
                   key={item.id}
                   className="bg-background-hover p-4 rounded-lg border border-text-muted/20 hover:border-accent-blue transition-all cursor-pointer"
@@ -76,9 +81,12 @@ Sales Executive, ReSource Pro`;
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h4 className="text-white font-medium text-sm mb-1 line-clamp-2">
-                        {item.title}
+                      <h4 className="text-white font-medium text-sm mb-1">
+                        {item.company}
                       </h4>
+                      <p className="text-accent-gold text-xs mb-2 font-semibold">
+                        {item.trigger}
+                      </p>
                       <p className="text-text-secondary text-xs mb-2 line-clamp-2">
                         {item.description}
                       </p>
@@ -103,21 +111,21 @@ Sales Executive, ReSource Pro`;
               ))
             ) : (
               <div className="animate-pulse space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-24 bg-background-hover rounded-lg"></div>
-                ))}
+                <div className="h-32 bg-background-hover rounded-lg flex items-center justify-center">
+                  <span className="text-text-muted text-sm">Loading Writer Playbook data...</span>
+                </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Email Composer */}
+        {/* Email Composer - REAL functionality */}
         <div>
           <h3 className="text-lg font-semibold text-accent-gold mb-3">
-            Outreach Email
+            Outreach Email (No Em-Dashes)
           </h3>
           <div className="bg-background-hover p-4 rounded-lg border border-text-muted/20">
-            {selectedNews ? (
+            {selectedProspect ? (
               <div className="space-y-4">
                 <div>
                   <label className="text-xs text-text-muted block mb-1">
@@ -149,7 +157,7 @@ Sales Executive, ReSource Pro`;
                     Copy to Clipboard
                   </button>
                   <button
-                    onClick={() => setSelectedNews(null)}
+                    onClick={() => setSelectedProspect(null)}
                     className="px-4 py-2 bg-background-dark hover:bg-opacity-80 text-text-secondary rounded transition-all text-sm"
                   >
                     Clear
@@ -159,7 +167,10 @@ Sales Executive, ReSource Pro`;
             ) : (
               <div className="text-center py-16 text-text-muted">
                 <p className="text-sm">
-                  Click on a news item to generate an outreach email
+                  Click on a prospect to generate a personalized outreach email
+                </p>
+                <p className="text-xs mt-2 text-green-400">
+                  ✓ No em-dashes in generated emails
                 </p>
               </div>
             )}

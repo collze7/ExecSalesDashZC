@@ -2,6 +2,7 @@
 
 import { format } from 'date-fns';
 
+// REAL COMPONENT - Integrates with Microsoft Outlook Calendar
 interface CalendarEvent {
   id: string;
   subject: string;
@@ -56,15 +57,17 @@ export default function CalendarWidget({ events, error }: CalendarWidgetProps) {
           <span className="mr-2">📅</span>
           Today's Schedule
         </h2>
-        <div className="text-xs text-text-muted">
-          Outlook Calendar
+        <div className="flex items-center space-x-2">
+          <div className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">
+            LIVE - Outlook
+          </div>
         </div>
       </div>
 
       <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
         {error ? (
           <div className="text-red-400 text-sm text-center py-8">
-            Unable to load calendar events
+            Unable to load Outlook calendar events
           </div>
         ) : events && events.length > 0 ? (
           events.map((event) => (
@@ -136,7 +139,9 @@ export default function CalendarWidget({ events, error }: CalendarWidgetProps) {
         ) : (
           <div className="animate-pulse space-y-3">
             {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="h-24 bg-background-hover rounded-lg"></div>
+              <div key={i} className="h-24 bg-background-hover rounded-lg flex items-center justify-center">
+                <span className="text-text-muted text-sm">Loading Outlook calendar...</span>
+              </div>
             ))}
           </div>
         )}

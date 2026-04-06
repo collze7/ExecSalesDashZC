@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getTodayCalendarEvents } from '@/lib/microsoft-graph';
 
+// REAL API - Integrates with Microsoft Outlook Calendar
 export async function GET() {
   try {
     const userEmail = process.env.DASHBOARD_USER_EMAIL || '';

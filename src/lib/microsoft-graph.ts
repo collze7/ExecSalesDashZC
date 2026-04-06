@@ -55,27 +55,3 @@ export async function getTodayCalendarEvents(userEmail: string) {
     throw error;
   }
 }
-
-export async function getUpcomingEvents(userEmail: string, hours: number = 24) {
-  try {
-    const client = await getGraphClient();
-    const now = new Date();
-    const future = new Date(now.getTime() + hours * 60 * 60 * 1000);
-
-    const events = await client
-      .api(`/users/${userEmail}/calendarView`)
-      .query({
-        startDateTime: now.toISOString(),
-        endDateTime: future.toISOString(),
-        $select: 'subject,start,end,location,attendees,importance,showAs',
-        $orderby: 'start/dateTime',
-        $top: 10,
-      })
-      .get();
-
-    return events.value;
-  } catch (error) {
-    console.error('Error fetching upcoming events:', error);
-    throw error;
-  }
-}

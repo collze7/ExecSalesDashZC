@@ -18,28 +18,18 @@ export default function Dashboard() {
     setIsClient(true);
   }, []);
 
-  const { data: weatherData, error: weatherError } = useSWR(
-    isClient ? '/api/weather' : null,
-    fetcher,
-    { refreshInterval: 300000 } // Refresh every 5 minutes
-  );
-
+  // REAL INTEGRATIONS - Calendar from Outlook
   const { data: calendarData, error: calendarError } = useSWR(
     isClient ? '/api/calendar' : null,
     fetcher,
     { refreshInterval: 60000 } // Refresh every minute
   );
 
-  const { data: opportunitiesData, error: opportunitiesError } = useSWR(
-    isClient ? '/api/opportunities' : null,
+  // REAL INTEGRATIONS - Prospecting from Writer Playbook
+  const { data: prospectingData, error: prospectingError } = useSWR(
+    isClient ? '/api/prospecting' : null,
     fetcher,
     { refreshInterval: 300000 } // Refresh every 5 minutes
-  );
-
-  const { data: newsData, error: newsError } = useSWR(
-    isClient ? '/api/news' : null,
-    fetcher,
-    { refreshInterval: 600000 } // Refresh every 10 minutes
   );
 
   if (!isClient) {
@@ -56,30 +46,33 @@ export default function Dashboard() {
         {/* Header Section */}
         <Header />
 
-        {/* Date & Weather Widget */}
+        {/* Date & Weather Widget - PLACEHOLDER */}
         <div className="mt-6">
-          <DateWeatherWidget weather={weatherData} error={weatherError} />
+          <DateWeatherWidget />
         </div>
 
         {/* Main Dashboard Grid */}
         <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Prospecting Section (spans 2 columns) */}
+          {/* Left Column - Prospecting Section (REAL - Writer Playbook) */}
           <div className="lg:col-span-2">
-            <ProspectingSection news={newsData} error={newsError} />
+            <ProspectingSection 
+              data={prospectingData} 
+              error={prospectingError} 
+            />
           </div>
 
-          {/* Right Column - Calendar */}
+          {/* Right Column - Calendar (REAL - Outlook) */}
           <div className="lg:col-span-1">
-            <CalendarWidget events={calendarData} error={calendarError} />
+            <CalendarWidget 
+              events={calendarData} 
+              error={calendarError} 
+            />
           </div>
         </div>
 
-        {/* Bottom Section - Opportunities */}
+        {/* Bottom Section - Opportunities - PLACEHOLDER */}
         <div className="mt-6">
-          <OpportunitiesWidget 
-            opportunities={opportunitiesData} 
-            error={opportunitiesError} 
-          />
+          <OpportunitiesWidget />
         </div>
 
         {/* Footer */}

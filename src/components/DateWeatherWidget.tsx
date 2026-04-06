@@ -3,19 +3,8 @@
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 
-interface WeatherProps {
-  weather?: {
-    temp: number;
-    description: string;
-    icon: string;
-    city: string;
-    humidity?: number;
-    windSpeed?: number;
-  };
-  error?: any;
-}
-
-export default function DateWeatherWidget({ weather, error }: WeatherProps) {
+// PLACEHOLDER COMPONENT - No real weather API integration
+export default function DateWeatherWidget() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [mounted, setMounted] = useState(false);
 
@@ -30,10 +19,20 @@ export default function DateWeatherWidget({ weather, error }: WeatherProps) {
 
   if (!mounted) return null;
 
+  // Placeholder weather data
+  const placeholderWeather = {
+    temp: 72,
+    description: 'clear sky',
+    icon: '01d',
+    city: 'New York',
+    humidity: 65,
+    windSpeed: 8
+  };
+
   return (
     <div className="glass-card p-6 slide-up">
       <div className="flex items-center justify-between">
-        {/* Date and Time */}
+        {/* Date and Time - REAL */}
         <div className="flex-1">
           <h2 className="text-4xl font-bold text-white">
             {format(currentTime, 'EEEE, MMMM d, yyyy')}
@@ -43,50 +42,35 @@ export default function DateWeatherWidget({ weather, error }: WeatherProps) {
           </p>
         </div>
 
-        {/* Weather */}
+        {/* Weather - PLACEHOLDER */}
         <div className="flex items-center space-x-6">
-          {error ? (
-            <div className="text-red-400 text-sm">Weather unavailable</div>
-          ) : weather ? (
-            <>
-              <div className="flex items-center space-x-4">
-                {weather.icon && (
-                  <img
-                    src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
-                    alt={weather.description}
-                    className="w-16 h-16"
-                  />
-                )}
-                <div>
-                  <div className="text-5xl font-bold text-white">
-                    {weather.temp}°F
-                  </div>
-                  <div className="text-text-secondary capitalize text-sm mt-1">
-                    {weather.description}
-                  </div>
-                </div>
-              </div>
-              <div className="border-l border-text-muted pl-6 space-y-2">
-                <div className="text-text-secondary text-sm">
-                  <span className="font-medium">{weather.city}</span>
-                </div>
-                {weather.humidity && (
-                  <div className="text-text-secondary text-sm">
-                    Humidity: {weather.humidity}%
-                  </div>
-                )}
-                {weather.windSpeed && (
-                  <div className="text-text-secondary text-sm">
-                    Wind: {weather.windSpeed} mph
-                  </div>
-                )}
-              </div>
-            </>
-          ) : (
-            <div className="animate-pulse">
-              <div className="h-16 w-32 bg-background-hover rounded"></div>
+          <div className="flex items-center space-x-4">
+            <div className="w-16 h-16 bg-accent-blue/20 rounded-full flex items-center justify-center">
+              <span className="text-3xl">☀️</span>
             </div>
-          )}
+            <div>
+              <div className="text-5xl font-bold text-white">
+                {placeholderWeather.temp}°F
+              </div>
+              <div className="text-text-secondary capitalize text-sm mt-1">
+                {placeholderWeather.description}
+              </div>
+            </div>
+          </div>
+          <div className="border-l border-text-muted pl-6 space-y-2">
+            <div className="text-text-secondary text-sm">
+              <span className="font-medium">{placeholderWeather.city}</span>
+            </div>
+            <div className="text-text-secondary text-sm">
+              Humidity: {placeholderWeather.humidity}%
+            </div>
+            <div className="text-text-secondary text-sm">
+              Wind: {placeholderWeather.windSpeed} mph
+            </div>
+          </div>
+          <div className="text-xs text-text-muted italic">
+            Placeholder data
+          </div>
         </div>
       </div>
     </div>
