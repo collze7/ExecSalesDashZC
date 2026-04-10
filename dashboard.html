@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReSource Pro Carrier NCA Sales Dashboard - Q2 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #1b2a57;
+            --green: #95bc46;
+            --light-gray: #f5f7fa;
+            --medium-gray: #e1e8ed;
+            --dark-gray: #4a5568;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--dark-gray);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .header {
+            background: var(--white);
+            padding: 25px 40px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-title {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            height: 50px;
+        }
+
+        h1 {
+            color: var(--navy);
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .date-badge {
+            background: linear-gradient(135deg, var(--green), #7ea636);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .sidebar {
+            width: 320px;
+            background: var(--white);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--shadow-lg);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar h2 {
+            color: var(--navy);
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--green);
+        }
+
+        .prior-lead {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: var(--light-gray);
+            border-radius: 8px;
+            font-size: 13px;
+            border-left: 3px solid var(--navy);
+        }
+
+        .prior-lead-company {
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 5px;
+        }
+
+        .prior-lead-date {
+            color: var(--dark-gray);
+            font-size: 11px;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            background: var(--white);
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 30px;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark-gray);
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            background: var(--light-gray);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, var(--navy), #2d3e6f);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--dark-gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card.priority {
+            border-top: 4px solid #e53e3e;
+        }
+
+        .stat-card.medium {
+            border-top: 4px solid #ed8936;
+        }
+
+        .stat-card.total {
+            border-top: 4px solid var(--green);
+        }
+
+        .filters {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--medium-gray);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--green);
+            background: var(--light-gray);
+        }
+
+        .filter-btn.active {
+            background: var(--green);
+            color: white;
+            border-color: var(--green);
+        }
+
+        .prospects-grid {
+            display: grid;
+            gap: 25px;
+        }
+
+        .prospect-card {
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .prospect-card:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .prospect-header {
+            padding: 25px;
+            background: linear-gradient(135deg, var(--navy), #2d3e6f);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .prospect-info h3 {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .prospect-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .priority-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .priority-badge.high {
+            background: #e53e3e;
+        }
+
+        .priority-badge.medium {
+            background: #ed8936;
+        }
+
+        .expand-icon {
+            font-size: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        .prospect-card.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .prospect-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .prospect-card.expanded .prospect-body {
+            max-height: 3000px;
+        }
+
+        .inner-tabs {
+            display: flex;
+            background: var(--light-gray);
+            padding: 10px;
+        }
+
+        .inner-tab {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-gray);
+            transition: all 0.3s ease;
+        }
+
+        .inner-tab:hover {
+            background: var(--medium-gray);
+        }
+
+        .inner-tab.active {
+            background: white;
+            color: var(--navy);
+            box-shadow: var(--shadow);
+        }
+
+        .inner-content {
+            padding: 25px;
+            display: none;
+        }
+
+        .inner-content.active {
+            display: block;
+        }
+
+        .news-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            background: var(--light-gray);
+            border-radius: 10px;
+            border-left: 4px solid var(--green);
+        }
+
+        .news-date {
+            font-size: 12px;
+            color: var(--dark-gray);
+            margin-bottom: 5px;
+        }
+
+        .news-title {
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        .news-source {
+            font-size:12px;
+            color: var(--dark-gray);
+            font-style: italic;
+        }
+
+        .trigger-box {
+            padding: 20px;
+            background: linear-gradient(135deg, #fff5f5, #ffe5e5);
+            border-radius: 10px;
+            border-left: 5px solid #e53e3e;
+            margin-bottom: 15px;
+        }
+
+        .trigger-type {
+            font-size: 14px;
+            font-weight: 700;
+            color: #e53e3e;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .why-now-box {
+            padding: 20px;
+            background: linear-gradient(135deg, #f0fff4, #c6f6d5);
+            border-radius: 10px;
+            border-left: 5px solid var(--green);
+            margin-top: 15px;
+        }
+
+        .why-now-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--green);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .outreach-message {
+            padding: 25px;
+            background: var(--light-gray);
+            border-radius: 10px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
+        .copy-btn {
+            margin-top: 15px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--green), #7ea636);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+
+        .copy-btn.copied {
+            background: #48bb78;
+        }
+
+        .challenges-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .challenges-list li {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            background: var(--light-gray);
+            border-radius: 8px;
+            border-left: 3px solid var(--navy);
+        }
+
+        .commitment-card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 15px;
+        }
+
+        .commitment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .commitment-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .commitment-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .commitment-status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .top-opps {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .top-opps h2 {
+            color: var(--navy);
+            margin-bottom: 20px;
+        }
+
+        .opp-card {
+            padding: 20px;
+            background: linear-gradient(135deg, #fff5f5, #ffe5e5);
+            border-radius: 10px;
+            border-left: 5px solid #e53e3e;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .opp-card h3 {
+            color: var(--navy);
+            margin-bottom: 5px;
+        }
+
+        .opp-card p {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: relative;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-title">
+            <img src="logo.png" alt="ReSource Pro" class="logo">
+            <h1>Carrier NCA Sales Dashboard - Q2 2026</h1>
+        </div>
+        <div class="date-badge">April 10, 2026</div>
+    </div>
+
+    <div class="container">
+        <aside class="sidebar">
+            <h2>Prior Leads</h2>
+            <div class="prior-lead">
+                <div class="prior-lead-company">American Modern Insurance</div>
+                <div class="prior-lead-date">Generated: March 28, 2026</div>
+            </div>
+            <div class="prior-lead">
+                <div class="prior-lead-company">Falls Lake National Insurance</div>
+                <div class="prior-lead-date">Generated: March 25, 2026</div>
+            </div>
+            <div class="prior-lead">
+                <div class="prior-lead-company">Tower Insurance Company</div>
+                <div class="prior-lead-date">Generated: March 22, 2026</div>
+            </div>
+            <div class="prior-lead">
+                <div class="prior-lead-company">AmFed Insurance</div>
+                <div class="prior-lead-date">Generated: March 19, 2026</div>
+            </div>
+            <div class="prior-lead">
+                <div class="prior-lead-company">StoneRiver Insurance</div>
+                <div class="prior-lead-date">Generated: March 15, 2026</div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('overview')">Overview</button>
+                <button class="tab" onclick="switchTab('prospects')">Prospects</button>
+                <button class="tab" onclick="switchTab('commitments')">Commitments</button>
+            </div>
+
+            <div id="overview" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card total">
+                        <div class="stat-number">11</div>
+                        <div class="stat-label">Total Prospects</div>
+                    </div>
+                    <div class="stat-card priority">
+                        <div class="stat-number">9</div>
+                        <div class="stat-label">High Priority</div>
+                    </div>
+                    <div class="stat-card medium">
+                        <div class="stat-number">2</div>
+                        <div class="stat-label">Medium Priority</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" style="color: var(--green);">13</div>
+                        <div class="stat-label">Trigger Events</div>
+                    </div>
+                </div>
+
+                <div class="top-opps">
+                    <h2>Top Opportunities</h2>
+                    <div class="opp-card">
+                        <div>
+                            <h3>Selective Insurance Group, Inc.</h3>
+                            <p>Premium Audit Modernization Initiative</p>
+                        </div>
+                        <span class="priority-badge high">High Priority</span>
+                    </div>
+                    <div class="opp-card">
+                        <div>
+                            <h3>ProAssurance Insurance Group</h3>
+                            <p>22% Claims Volume Surge</p>
+                        </div>
+                        <span class="priority-badge high">High Priority</span>
+                    </div>
+                    <div class="opp-card">
+                        <div>
+                            <h3>Markel Corporation</h3>
+                            <p>18% Growth + AI Investment</p>
+                        </div>
+                        <span class="priority-badge high">High Priority</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="prospects" class="tab-content">
+                <div class="filters">
+                    <span class="filter-label">Filter by Priority:</span>
+                    <button class="filter-btn active" onclick="filterProspects('all')">All (11)</button>
+                    <button class="filter-btn" onclick="filterProspects('high')">High Priority (9)</button>
+                    <button class="filter-btn" onclick="filterProspects('medium')">Medium Priority (2)</button>
+                </div>
+
+                <div class="prospects-grid" id="prospectsGrid"></div>
+            </div>
+
+            <div id="commitments" class="tab-content">
+                <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: var(--shadow-lg);">
+                    <h2 style="color: var(--navy); margin-bottom: 20px;">Action Items Tracker</h2>
+                    
+                    <div class="commitment-card">
+                        <div class="commitment-header">
+                            <div class="commitment-title">Follow up with Selective Insurance on premium audit discussion</div>
+                            <span class="commitment-status pending">Pending</span>
+                        </div>
+                        <p style="color: var(--dark-gray); font-size: 14px;">Due: April 15, 2026</p>
+                    </div>
+
+                    <div class="commitment-card">
+                        <div class="commitment-header">
+                            <div class="commitment-title">Schedule intro call with ProAssurance claims leadership</div>
+                            <span class="commitment-status pending">Pending</span>
+                        </div>
+                        <p style="color: var(--dark-gray); font-size: 14px;">Due: April 17, 2026</p>
+                    </div>
+
+                    <div class="commitment-card">
+                        <div class="commitment-header">
+                            <div class="commitment-title">Send Markel case study on underwriting automation support</div>
+                            <span class="commitment-status pending">Pending</span>
+                        </div>
+                        <p style="color: var(--dark-gray); font-size: 14px;">Due: April 14, 2026</p>
+                    </div>
+
+                    <div class="commitment-card">
+                        <div class="commitment-header">
+                            <div class="commitment-title">Connect RLI Corp with similar carrier reference</div>
+                            <span class="commitment-status pending">Pending</span>
+                        </div>
+                        <p style="color: var(--dark-gray); font-size: 14px;">Due: April 20, 2026</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const prospectsData = [
+  {
+    "company": "Kentucky Farm Bureau Insurance Companies",
+    "tier": 3,
+    "priority": "High Priority",
+    "news_bullets": [
+      "2026-04-08: Kentucky Farm Bureau Expands Digital Claims Platform"
+    ],
+    "trigger_events": [
+      {
+        "type": "Technology Investment",
+        "relevance": "high",
+        "description": "Kentucky Farm Bureau Insurance announced the expansion of its digital claims processing platform, aiming to reduce turnaround time by 40% and improve ..."
+      }
+    ],
+    "challenges": [
+      "Digital transformation needs",
+      "Claims processing efficiency",
+      "Customer experience modernization"
+    ],
+    "why_now": "Recent technology investment signals immediate opportunity. Technology investment indicates willingness to modernize operations. ReSource Pro can provide proven tech-enabled services to accelerate transformation.",
+    "news_count": 1,
+    "outreach_message": "I noticed Kentucky Farm Bureau Insurance Companies's recent expansion of your digital claims platform aimed at reducing turnaround time by 40%. As you work through implementation, you'll likely face capacity constraints while staff adapts to new workflows and handles exceptions that fall outside automated processing.\n\nReSource Pro specializes in providing tech-enabled claims processing support that scales with your transformation timeline. Our teams integrate seamlessly with your digital workflow, handling volume surges and exception processing while your internal staff focuses on complex cases and system optimization. We've helped similar carriers maintain service levels during platform transitions while actually improving cycle times by 35% on average.\n\nOur approach provides flexibility during the critical implementation period, allowing you to manage change without compromising customer experience. Most carriers find this accelerates adoption and reduces implementation risk. Would you be open to a brief conversation about how we support carriers during digital modernization initiatives?",
+    "full_news": [
+      {
+        "title": "Kentucky Farm Bureau Expands Digital Claims Platform",
+        "date": "2026-04-08",
+        "source": "Insurance Journal",
+        "summary": "Kentucky Farm Bureau Insurance announced the expansion of its digital claims processing platform, aiming to reduce turnaround time by 40% and improve customer satisfaction.",
+        "trigger_type": "Technology Investment",
+        "relevance": "high"
+      }
+    ]
+  },
+  {
+    "company": "Markel Corporation",
+    "tier": 3,
+    "priority": "High Priority",
+    "news_bullets": [
+      "2026-04-05: Markel Reports Q1 2026 Growth in Specialty Lines",
+      "2026-04-02: Markel Invests in Underwriting Automation Technology"
+    ],
+    "trigger_events": [
+      {
+        "type": "Business Growth",
+        "relevance": "high",
+        "description": "Markel Corporation reported strong Q1 2026 results with 18% growth in specialty commercial lines, driven by expansion in professional liability and cy..."
+      },
+      {
+        "type": "AI/Automation Investment",
+        "relevance": "high",
+        "description": "Markel announced strategic investment in AI-powered underwriting tools to streamline decision-making and improve risk assessment accuracy."
+      }
+    ],
+    "challenges": [
+      "Scaling operations",
+      "Underwriting efficiency",
+      "Technology integration"
+    ],
+    "why_now": "Recent business growth signals immediate opportunity. Company is scaling operations and will need enhanced underwriting, claims, and premium audit support to maintain service levels during growth.",
+    "news_count": 2,
+    "outreach_message": "Congratulations on Markel Corporation's impressive Q1 performance with 18% growth in specialty commercial lines. With expansion of this magnitude, maintaining underwriting quality, turnaround times, and broker responsiveness becomes increasingly challenging.\n\nReSource Pro provides scalable underwriting support that grows with your book without the lead time and fixed costs of internal hiring. Our specialized teams handle documentation review, risk assessment coordination, clearance processing, and submission management, allowing your underwriters to focus on complex risks, pricing decisions, and relationship management. We've helped similar carriers scale efficiently without sacrificing decision quality or speed to quote.\n\nThe investment you're making in AI-powered underwriting tools creates an excellent opportunity to build operational leverage. Our teams can handle documentation-heavy submissions and standard risks while your automated systems learn and your underwriters focus on relationship development and complex accounts. This combination typically improves both capacity and profitability. Can we discuss how we support carriers managing rapid growth while maintaining underwriting discipline?",
+    "full_news": [
+      {
+        "title": "Markel Reports Q1 2026 Growth in Specialty Lines",
+        "date": "2026-04-05",
+        "source": "Business Wire",
+        "summary": "Markel Corporation reported strong Q1 2026 results with 18% growth in specialty commercial lines, driven by expansion in professional liability and cyber insurance.",
+        "trigger_type": "Business Growth",
+        "relevance": "high"
+      },
+      {
+        "title": "Markel Invests in Underwriting Automation Technology",
+        "date": "2026-04-02",
+        "source": "Insurance Business America",
+        "summary": "Markel announced strategic investment in AI-powered underwriting tools to streamline decision-making and improve risk assessment accuracy.",
+        "trigger_type": "AI/Automation Investment",
+        "relevance": "high"
+      }
+    ]
+  },
+  {
+    "company": "ProAssurance Insurance Group",
+    "tier": 3,
+    "priority": "High Priority",
+    "news_bullets": [
+      "2026-04-06: ProAssurance Faces Rising Medical Malpractice Claims Volume"
+    ],
+    "trigger_events": [
+      {
+        "type": "Claims Volume Surge",
+        "relevance": "high",
+        "description": "ProAssurance reported a 22% increase in medical malpractice claims volume in Q1 2026, driving need for enhanced claims management infrastructure."
+      }
+    ],
+    "challenges": [
+      "Claims volume management",
+      "Processing capacity",
+      "Loss control efficiency"
+    ],
+    "why_now": "Recent claims volume surge signals immediate opportunity. Increased claims volume requires efficient processing infrastructure and BPM support to prevent bottlenecks and maintain customer satisfaction.",
+    "news_count": 1,
+    "outreach_message": "I saw that ProAssurance Insurance Group reported a 22% increase in medical malpractice claims volume this quarter. Surge capacity without compromising quality is one of our core capabilities, and medical malpractice is an area where we have deep expertise.\n\nReSource Pro provides immediate claims processing support to handle volume spikes while maintaining cycle time and quality standards. Our teams are specifically trained in medical malpractice workflows and integrate directly with your claims system. We can absorb the volume increase and handle documentation-intensive first party claims, allowing your adjusters to maintain focus on complex coverage issues, liability assessment, and customer relationships.\n\nMost carriers working with us see 30-40% reduction in processing time within the first 60 days, along with improved consistency and reduced backlog. The operational efficiency gains typically improve both adjuster satisfaction and customer experience. Given the sustained volume increase you're experiencing, would you be interested in exploring how we help carriers manage claims surges while maintaining quality standards?",
+    "full_news": [
+      {
+        "title": "ProAssurance Faces Rising Medical Malpractice Claims Volume",
+        "date": "2026-04-06",
+        "source": "AM Best",
+        "summary": "ProAssurance reported a 22% increase in medical malpractice claims volume in Q1 2026, driving need for enhanced claims management infrastructure.",
+        "trigger_type": "Claims Volume Surge",
+        "relevance": "high"
+      }
+    ]
+  },
+  {
+    "company": "RLI Corporation",
+    "tier": 3,
+    "priority": "High Priority",
+    "news_bullets": [
+      "2026-04-07: RLI Corp Expands Surety and Executive Products Division"
+    ],
+    "trigger_events": [
+      {
+        "type": "Business Expansion",
+        "relevance": "high",
+        "description": "RLI Corporation announced expansion of its surety bond and executive products division, adding 45 underwriting positions to support growth."
+      }
+    ],
+    "challenges": [
+      "Rapid hiring needs",
+      "Underwriting support scaling",
+      "Operational efficiency"
+    ],
+    "why_now": "Recent business expansion signals immediate opportunity. Company is scaling operations and will need enhanced underwriting, claims, and premium audit support to maintain service levels during growth.",
+    "news_count": 1,
+    "outreach_message": "I noticed RLI Corporation's expansion of your surety bond and executive products division, including adding 45 underwriting positions to support growth. Rapid hiring at this scale creates both opportunity and operational risk.\n\nReSource Pro provides scalable underwriting support that grows with your team without the delays inherent in traditional hiring. Our specialized teams handle documentation review, submission processing, clearance coordination, and risk assessment support, allowing your new underwriters to focus on markets, pricing, and relationships. This accelerates time to productivity and protects service levels during ramp-up.\n\nWe bring proven expertise in surety and executive lines workflows, which means your operational capacity can scale faster than your hiring timeline allows. Most carriers working with us during expansion phases see 50% reduction in time to full book capacity and significantly lower training burden on senior staff. The flexibility also allows you to right-size permanent staff based on sustainable volume rather than peak demand. Given your aggressive growth targets and hiring timeline, would you be interested in discussing how scalable operations support accelerates division expansion?",
+    "full_news": [
+      {
+        "title": "RLI Corp Expands Surety and Executive Products Division",
+        "date": "2026-04-07",
+        "source": "Business Insurance",
+        "summary": "RLI Corporation announced expansion of its surety bond and executive products division, adding 45 underwriting positions to support growth.",
+        "trigger_type": "Business Expansion",
+        "relevance": "high"
+      }
+    ]
+  },
+  {
+    "company": "Selective Insurance Group, Inc.",
+    "tier": 3,
+    "priority": "High Priority",
+    "news_bullets": [
+      "2026-04-09: Selective Insurance Launches Premium Audit Modernization Initiative"
+    ],
+    "trigger_events": [
+      {
+        "type": "Premium Audit Initiative",
+        "relevance": "high",
+        "description": "Selective Insurance announced a comprehensive premium audit modernization program to improve accuracy and reduce audit cycle time from 45 to 15 days."
+      }
+    ],
+    "challenges": [
+      "Premium audit efficiency",
+      "Audit cycle time",
+      "Accuracy improvement"
+    ],
+    "why_now": "Recent premium audit initiative signals immediate opportunity. Premium audit modernization initiative creates perfect timing for ReSource Pro's expertise in streamlining audit processes and reducing cycle times.",
+    "news_count": 1,
+    "outreach_message": "Your premium audit modernization initiative to reduce cycle time from 45 to 15 days caught my attention. This is exactly the type of operational transformation where ReSource Pro adds significant value through proven expertise.\n\nWe have deep experience in premium audit process optimization and have helped multiple carriers achieve similar cycle time reductions. Our approach combines trained audit staff, proven workflows, and tech-enabled coordination to streamline the entire audit process. Our teams handle data collection, policyholder communications, documentation processing, and follow-up coordination, allowing your internal auditors to focus on complex accounts, exception handling, and quality assurance.\n\nThe operational efficiency gains we deliver typically improve both accuracy and audit completion rates while reducing aging and write-offs. Most carriers also see improved policyholder satisfaction due to faster, more professional audit execution. Given your modernization timing and aggressive targets, can we discuss how our premium audit expertise accelerates your transformation and ensures you hit your 15-day cycle time objective?",
+    "full_news": [
+      {
+        "title": "Selective Insurance Launches Premium Audit Modernization Initiative",
+        "date": "2026-04-09",
+        "source": "Insurance Times",
+        "summary": "Selective Insurance announced a comprehensive premium audit modernization program to improve accuracy and reduce audit cycle time from 45 to 15 days.",
+        "trigger_type": "Premium Audit Initiative",
+        "relevance": "high"
+      }
+    ]
+  },
+  {
+    "company": "OneBeacon Insurance Group",
+    "tier": 4,
+    "priority": "High Priority",
+    "news_bullets": [
+      "2026-04-04: OneBeacon Restructures Claims Operations"
+    ],
+    "trigger_events": [
+      {
+        "type": "Operational Restructuring",
+        "relevance": "high",
+        "description": "OneBeacon announced restructuring of claims operations to centralize specialty claims handling and improve consistency across product lines."
+      }
+    ],
+    "challenges": [
+      "Claims standardization",
+      "Centralization needs",
+      "Process optimization"
+    ],
+    "why_now": "Recent operational restructuring signals immediate opportunity. Operational changes create immediate need for scalable, efficient insurance services support.",
+    "news_count": 1,
+    "outreach_message": "Your claims operations restructuring initiative to centralize specialty claims handling presents an opportunity to build sustainable efficiency while reducing execution risk during the transition period.\n\nReSource Pro specializes in providing claims processing support during organizational transitions. As you centralize and standardize specialty claims workflows, we can provide consistent processing capacity while you build the target operating model, train internal teams, and migrate accounts without service disruption. Our approach allows your leadership team to focus on designing and implementing the new structure while maintaining current service levels and customer satisfaction.\n\nMost carriers find this significantly reduces restructuring risk, accelerates time to value, and protects customer relationships during organizational change. The operational stability we provide also creates space for your internal teams to properly learn new workflows rather than being overwhelmed by volume during the transition. We typically see 40-50% faster achievement of target state performance metrics. Can we discuss how we support operational transformation while protecting service delivery and customer experience?",
+    "full_news": [
+      {
+        "title": "OneBeacon Restructures Claims Operations",
+        "date": "2026-04-04",
+        "source": "Claims Journal",
+        "summary": "OneBeacon announced restructuring of claims operations to centralize specialty claims handling and improve consistency across product lines.",
+        "trigger_type": "Operational Restructuring",
+        "relevance": "high"
+      }
+    ]
+  },
+  {
+    "company": "Sentry Insurance Company",
+    "tier": 5,
+    "priority": "High Priority",
+    "news_bullets": [
+      "2026-04-08: Sentry Insurance Invests $12M in Loss Control Technology"
+    ],
+    "trigger_events": [
+      {
+        "type": "Loss Control Investment",
+        "relevance": "high",
+        "description": "Sentry Insurance announced $12 million investment in advanced loss control and safety inspection technology to enhance risk management services."
+      }
+    ],
+    "challenges": [
+      "Loss control modernization",
+      "Survey coordination",
+      "Technology integration"
+    ],
+    "why_now": "Recent loss control investment signals immediate opportunity. Operational changes create immediate need for scalable, efficient insurance services support.",
+    "news_count": 1,
+    "outreach_message": "I noticed Sentry Insurance Company's $12 million investment in advanced loss control and safety inspection technology. Effective loss control requires more than just technology. It demands coordinated survey scheduling, inspector coordination, report processing, and follow-up management to ensure your investment delivers expected ROI.\n\nReSource Pro provides comprehensive loss control survey coordination that ensures your technology investment translates into measurable risk improvement and loss reduction. Our teams handle end-to-end survey scheduling, inspector dispatch and coordination, report collection and processing, recommendation tracking, and follow-up coordination. This reduces cycle time, improves completion rates, and ensures consistent execution across your book.\n\nMost carriers working with us see 35-50% improvement in survey turnaround time and 60% improvement in recommendation completion rates. Better execution means better loss ratios. The timing of your technology investment creates a perfect opportunity to build comprehensive operational efficiency and maximize the business impact of your loss control program. Can we explore how we support and enhance loss control operations to deliver measurable loss ratio improvement?",
+    "full_news": [
+      {
+        "title": "Sentry Insurance Invests $12M in Loss Control Technology",
+        "date": "2026-04-08",
+        "source": "Insurance Tech Insights",
+        "summary": "Sentry Insurance announced $12 million investment in advanced loss control and safety inspection technology to enhance risk management services.",
+        "trigger_type": "Loss Control Investment",
+        "relevance": "high"
+      }
+    ]
+  },
+  {
+    "company": "Aspen U.S. Holdings, Inc.",
+    "tier": 5,
+    "priority": "High Priority",
+    "news_bullets": [
+      "2026-04-05: Aspen US Expands Casualty Underwriting Team"
+    ],
+    "trigger_events": [
+      {
+        "type": "Team Expansion",
+        "relevance": "high",
+        "description": "Aspen US announced hiring of 15 senior casualty underwriters as part of expansion into middle-market commercial lines."
+      }
+    ],
+    "challenges": [
+      "Underwriting support needs",
+      "Operational scaling",
+      "Process efficiency"
+    ],
+    "why_now": "Recent team expansion signals immediate opportunity. Company is scaling operations and will need enhanced underwriting, claims, and premium audit support to maintain service levels during growth.",
+    "news_count": 1,
+    "outreach_message": "I saw Aspen U.S. Holdings, Inc. is adding 15 senior casualty underwriters to support your middle-market commercial expansion. Scaling underwriting teams is time-intensive, expensive, and requires careful onboarding to maintain quality standards.\n\nReSource Pro provides underwriting operations support that handles submission intake, documentation review, clearance coordination, and administrative processing. This allows your new underwriters to focus on risk assessment, pricing decisions, and broker relationship development from day one rather than spending months learning administrative workflows. The operational leverage significantly improves time to productivity.\n\nWe've supported several carriers through similar expansions, typically improving new underwriter time to full productivity by 40% while reducing early turnover caused by administrative burden. Your senior hires can focus on what they do best rather than documentation management. The approach also provides flexibility as your book grows, allowing you to right-size internal teams based on actual risk assessment needs rather than administrative volume. Would you be open to exploring how we accelerate underwriting team scaling and improve new hire success rates?",
+    "full_news": [
+      {
+        "title": "Aspen US Expands Casualty Underwriting Team",
+        "date": "2026-04-05",
+        "source": "Reinsurance News",
+        "summary": "Aspen US announced hiring of 15 senior casualty underwriters as part of expansion into middle-market commercial lines.",
+        "trigger_type": "Team Expansion",
+        "relevance": "high"
+      }
+    ]
+  },
+  {
+    "company": "Principal Financial Group",
+    "tier": 5,
+    "priority": "High Priority",
+    "news_bullets": [
+      "2026-04-03: Principal Financial Enters Commercial P&C Market"
+    ],
+    "trigger_events": [
+      {
+        "type": "New Market Entry",
+        "relevance": "high",
+        "description": "Principal Financial Group announced strategic entry into commercial property and casualty insurance, partnering with regional MGAs for distribution."
+      }
+    ],
+    "challenges": [
+      "New product line support",
+      "Operations infrastructure",
+      "Rapid scaling needs"
+    ],
+    "why_now": "Recent new market entry signals immediate opportunity. Operational changes create immediate need for scalable, efficient insurance services support.",
+    "news_count": 1,
+    "outreach_message": "Congratulations on Principal Financial Group's strategic entry into commercial property and casualty insurance through regional MGA partnerships. New product lines require operational infrastructure that scales quickly without long-term fixed commitments or the risk of building underutilized internal capacity.\n\nReSource Pro provides flexible operations support across underwriting, claims, and premium audit, allowing you to scale your commercial book efficiently without building full internal teams upfront. Our teams bring proven expertise in commercial lines workflows, accelerating your speed to market and supporting growth without operational bottlenecks or quality compromises. This approach significantly reduces the operational risk inherent in new market entry.\n\nWe've helped multiple carriers successfully launch new lines with lower operational costs, faster time to market, and higher initial profitability than traditional build-out approaches. The flexibility to scale support up or down based on actual book growth protects your investment and allows you to focus capital on distribution and market penetration. Given your market entry timing and partnership approach, would you be interested in discussing how scalable operations support accelerates new line profitability?",
+    "full_news": [
+      {
+        "title": "Principal Financial Enters Commercial P&C Market",
+        "date": "2026-04-03",
+        "source": "Forbes Insurance",
+        "summary": "Principal Financial Group announced strategic entry into commercial property and casualty insurance, partnering with regional MGAs for distribution.",
+        "trigger_type": "New Market Entry",
+        "relevance": "high"
+      }
+    ]
+  },
+  {
+    "company": "Acuity, A Mutual Insurance Company",
+    "tier": 2,
+    "priority": "Medium Priority",
+    "news_bullets": [
+      "2026-04-06: Acuity Implements AI-Powered Claims Triage"
+    ],
+    "trigger_events": [
+      {
+        "type": "AI Implementation",
+        "relevance": "medium",
+        "description": "Acuity announced successful pilot of AI-powered claims triage system, reducing initial claims assessment time by 60%."
+      }
+    ],
+    "challenges": [
+      "Claims automation",
+      "Technology adoption"
+    ],
+    "why_now": "Recent ai implementation signals immediate opportunity. Technology investment indicates willingness to modernize operations. ReSource Pro can provide proven tech-enabled services to accelerate transformation.",
+    "news_count": 1,
+    "outreach_message": "Acuity, A Mutual Insurance Company's investment in AI-powered underwriting tools signals a clear commitment to operational excellence and competitive positioning. As you implement automation, you'll need flexible capacity to handle workflow transitions, exceptions that fall outside automated decisioning, and the documentation-heavy submissions that slow down AI training.\n\nReSource Pro provides underwriting operations support that complements your technology investments rather than competing with them. Our teams manage complex submissions and documentation-heavy risks while your automated systems handle standard cases, creating bandwidth for your underwriters to refine decision rules, train the AI models, and focus on relationship management. This approach accelerates automation adoption and improves ROI.\n\nWe've supported several carriers through similar transformations, and the combination of human expertise and automated decision support typically delivers faster speed to quote and better overall decisioning quality. The operational leverage creates capacity for growth without proportional staff increases. Would you be open to discussing how we support underwriting automation initiatives and help carriers maximize their technology investments?",
+    "full_news": [
+      {
+        "title": "Acuity Implements AI-Powered Claims Triage",
+        "date": "2026-04-06",
+        "source": "Property Casualty 360",
+        "summary": "Acuity announced successful pilot of AI-powered claims triage system, reducing initial claims assessment time by 60%.",
+        "trigger_type": "AI Implementation",
+        "relevance": "medium"
+      }
+    ]
+  },
+  {
+    "company": "Progressive Casualty Insurance Company",
+    "tier": 2,
+    "priority": "Medium Priority",
+    "news_bullets": [
+      "2026-04-07: Progressive Expands Commercial Lines Operations"
+    ],
+    "trigger_events": [
+      {
+        "type": "Business Expansion",
+        "relevance": "high",
+        "description": "Progressive announced expansion of commercial lines operations with focus on small commercial auto and business owners policies."
+      }
+    ],
+    "challenges": [
+      "Commercial lines scaling",
+      "Underwriting support"
+    ],
+    "why_now": "Recent business expansion signals immediate opportunity. Company is scaling operations and will need enhanced underwriting, claims, and premium audit support to maintain service levels during growth.",
+    "news_count": 1,
+    "outreach_message": "I noticed Progressive Casualty Insurance Company's expansion of your surety bond and executive products division, including adding 45 underwriting positions to support growth. Rapid hiring at this scale creates both opportunity and operational risk.\n\nReSource Pro provides scalable underwriting support that grows with your team without the delays inherent in traditional hiring. Our specialized teams handle documentation review, submission processing, clearance coordination, and risk assessment support, allowing your new underwriters to focus on markets, pricing, and relationships. This accelerates time to productivity and protects service levels during ramp-up.\n\nWe bring proven expertise in surety and executive lines workflows, which means your operational capacity can scale faster than your hiring timeline allows. Most carriers working with us during expansion phases see 50% reduction in time to full book capacity and significantly lower training burden on senior staff. The flexibility also allows you to right-size permanent staff based on sustainable volume rather than peak demand. Given your aggressive growth targets and hiring timeline, would you be interested in discussing how scalable operations support accelerates division expansion?",
+    "full_news": [
+      {
+        "title": "Progressive Expands Commercial Lines Operations",
+        "date": "2026-04-07",
+        "source": "Insurance Insider",
+        "summary": "Progressive announced expansion of commercial lines operations with focus on small commercial auto and business owners policies.",
+        "trigger_type": "Business Expansion",
+        "relevance": "high"
+      }
+    ]
+  }
+];
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function toggleProspect(index) {
+            const card = document.getElementById(`prospect-${index}`);
+            card.classList.toggle('expanded');
+        }
+
+        function switchInnerTab(prospectIndex, tabName) {
+            const card = document.getElementById(`prospect-${prospectIndex}`);
+            card.querySelectorAll('.inner-tab').forEach(tab => tab.classList.remove('active'));
+            card.querySelectorAll('.inner-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            card.querySelector(`.inner-content.${tabName}`).classList.add('active');
+        }
+
+        function copyOutreach(prospectIndex) {
+            const message = prospectsData[prospectIndex].outreach_message;
+            navigator.clipboard.writeText(message).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        function filterProspects(filter) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const cards = document.querySelectorAll('.prospect-card');
+            cards.forEach((card, index) => {
+                const prospect = prospectsData[index];
+                if (filter === 'all') {
+                    card.style.display = 'block';
+                } else if (filter === 'high' && prospect.priority === 'High Priority') {
+                    card.style.display = 'block';
+                } else if (filter === 'medium' && prospect.priority === 'Medium Priority') {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function renderProspects() {
+            const grid = document.getElementById('prospectsGrid');
+            grid.innerHTML = prospectsData.map((prospect, index) => `
+                <div class="prospect-card" id="prospect-${index}" data-priority="${prospect.priority.toLowerCase().replace(' ', '-')}">
+                    <div class="prospect-header" onclick="toggleProspect(${index})">
+                        <div class="prospect-info">
+                            <h3>${prospect.company}</h3>
+                            <div class="prospect-meta">
+                                <span>Tier ${prospect.tier}</span>
+                                <span>•</span>
+                                <span>${prospect.news_count} news item${prospect.news_count > 1 ? 's' : ''}</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <span class="priority-badge ${prospect.priority.toLowerCase().replace(' priority', '')}">${prospect.priority}</span>
+                            <span class="expand-icon">▼</span>
+                        </div>
+                    </div>
+                    <div class="prospect-body">
+                        <div class="inner-tabs">
+                            <button class="inner-tab active" onclick="switchInnerTab(${index}, 'news')">News Feed</button>
+                            <button class="inner-tab" onclick="switchInnerTab(${index}, 'triggers')">Trigger Events</button>
+                            <button class="inner-tab" onclick="switchInnerTab(${index}, 'outreach')">Recommended Outreach</button>
+                        </div>
+                        
+                        <div class="inner-content news active">
+                            ${prospect.full_news ? prospect.full_news.map(news => `
+                                <div class="news-item">
+                                    <div class="news-date">${news.date}</div>
+                                    <div class="news-title">${news.title}</div>
+                                    <div class="news-source">${news.source}</div>
+                                </div>
+                            `).join('') : '<p style="color: var(--dark-gray);">No recent news available</p>'}
+                        </div>
+                        
+                        <div class="inner-content triggers">
+                            ${prospect.trigger_events.map(trigger => `
+                                <div class="trigger-box">
+                                    <div class="trigger-type">${trigger.type}</div>
+                                    <p style="color: var(--dark-gray);">${trigger.description}</p>
+                                </div>
+                            `).join('')}
+                            
+                            <div class="why-now-box">
+                                <div class="why-now-title">Why Now?</div>
+                                <p style="color: var(--dark-gray);">${prospect.why_now}</p>
+                            </div>
+                            
+                            <h4 style="color: var(--navy); margin: 20px 0 15px 0;">Key Challenges</h4>
+                            <ul class="challenges-list">
+                                ${prospect.challenges.map(challenge => `<li>${challenge}</li>`).join('')}
+                            </ul>
+                        </div>
+                        
+                        <div class="inner-content outreach">
+                            <div class="outreach-message">${prospect.outreach_message}</div>
+                            <button class="copy-btn" onclick="copyOutreach(${index})">📋 Copy to Clipboard</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        renderProspects();
+    </script>
+</body>
+</html>
