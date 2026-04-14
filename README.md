@@ -1,318 +1,210 @@
-# ReSource Pro Sales Executive Dashboard (Streamlined)
+# Writer Playbook → Vercel Webhook Integration
 
-A focused sales executive dashboard with **real integrations** for Writer Playbook prospecting and Microsoft Outlook Calendar, plus placeholder UI for future features.
+## 🎯 What This Does
 
-## What's REAL vs Placeholder
-
-### ✅ REAL & WORKING
-1. **Writer Playbook Integration** - Prospecting section pulls live data from Writer
-2. **Microsoft Outlook Calendar** - Today's schedule from your Microsoft 365 calendar
-3. **Email Composer** - Generates outreach emails (no em-dashes) from prospects
-4. **Live Date/Time** - Real-time clock display
-
-### 📦 PLACEHOLDER (UI Only)
-1. **Weather Widget** - Shows static placeholder data
-2. **Salesforce Opportunities** - Shows example opportunity cards
-3. **Pipeline Metrics** - Static numbers for visual reference
-
-## Quick Start
-
-### Prerequisites
-- Node.js 18+
-- Microsoft 365 account with calendar access
-- Writer account with API access
-- Azure AD app registration (for Outlook)
-
-### 1. Install & Configure
-
-```bash
-# Extract and install
-unzip sales-executive-dashboard-lite.zip
-cd sales-executive-dashboard-lite
-npm install
-
-# Configure environment
-cp .env.example .env
-nano .env
-```
-
-### 2. Required Configuration
-
-Edit `.env` with these values:
-
-```env
-# Microsoft Outlook Calendar (REQUIRED)
-MICROSOFT_CLIENT_ID=your_azure_app_id
-MICROSOFT_CLIENT_SECRET=your_azure_secret
-MICROSOFT_TENANT_ID=your_azure_tenant_id
-DASHBOARD_USER_EMAIL=zachary_collins@resourcepro.com
-
-# Writer API (REQUIRED)
-WRITER_API_KEY=your_writer_api_key
-WRITER_ORG_ID=your_writer_org_id
-```
-
-### 3. Run the Dashboard
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000)
-
-## Getting API Credentials
-
-### Microsoft Graph API (Outlook Calendar)
-
-1. Go to [Azure Portal](https://portal.azure.com)
-2. Navigate to Azure Active Directory > App registrations
-3. Click "New registration"
-4. Add API permissions:
-   - `Calendars.Read`
-   - `User.Read`
-5. Under "Certificates & secrets", create a new client secret
-6. Copy:
-   - Application (client) ID → `MICROSOFT_CLIENT_ID`
-   - Directory (tenant) ID → `MICROSOFT_TENANT_ID`
-   - Client secret value → `MICROSOFT_CLIENT_SECRET`
-
-### Writer API
-
-1. Log in to your Writer account
-2. Go to Settings > API
-3. Generate an API key
-4. Copy:
-   - API Key → `WRITER_API_KEY`
-   - Organization ID → `WRITER_ORG_ID`
-
-## Writer Playbook Integration
-
-### Prospecting Playbook Setup
-
-Your Writer Playbook should send prospecting data to the dashboard API:
-
-**Endpoint**: `POST https://your-dashboard-url.com/api/prospecting`
-
-**Headers**:
-```json
-{
-  "Content-Type": "application/json",
-  "Authorization": "Bearer YOUR_WRITER_API_KEY"
-}
-```
-
-**Request Body**:
-```json
-[
-  {
-    "id": "unique-id",
-    "company": "Company Name",
-    "trigger": "News headline or trigger event",
-    "description": "Detailed description of the trigger",
-    "source": "Source publication",
-    "publishedAt": "2026-04-06T10:00:00Z",
-    "relevantTo": "Category or service line"
-  }
-]
-```
-
-### Example Playbook Template
-
-```markdown
-### 1. Prospecting Research
-
-- Search for recent insurance industry news about [w-var](Target_Companies)
-- Identify companies with operational changes, expansions, or modernization initiatives
-- Filter for mid-market P&C carriers (exclude Tier 1 except Progressive)
-
-### 2. Data Processing
-
-- Extract company name, trigger event, and description
-- Format as JSON array
-- Add source and timestamp
-
-### 3. Dashboard Update
-
-- Send formatted prospecting data to dashboard API
-- POST to https://your-dashboard-url.com/api/prospecting
-- Include Writer API key in Authorization header
-
-### Completion
-
-- Prospecting dashboard updated with latest intelligence
-- Email templates ready for outreach
-```
-
-## Features
-
-### Prospecting Intelligence (REAL)
-- Live data from Writer Playbook
-- Company triggers and news
-- AI-powered email composer
-- **No em-dashes in generated emails**
-- Copy-to-clipboard functionality
-
-### Outlook Calendar (REAL)
-- Today's schedule
-- Meeting details and durations
-- Online meeting links (Teams, etc.)
-- Attendee counts
-- Auto-refresh every minute
-
-### Email Generation
-Click any prospect to generate a personalized outreach email. The system:
-- Uses the company name and trigger
-- Creates professional, context-aware content
-- **Never uses em-dashes** (uses hyphens or commas instead)
-- Includes your signature
-- Allows editing before sending
-
-### Placeholder Sections
-The following sections show UI mockups but don't connect to real APIs:
-- Weather widget (static data)
-- Salesforce opportunities (example cards)
-- Pipeline metrics (placeholder numbers)
-
-## Project Structure
-
-```
-sales-executive-dashboard-lite/
-├── src/
-│   ├── app/
-│   │   ├── api/
-│   │   │   ├── calendar/       ✅ REAL - Outlook integration
-│   │   │   └── prospecting/    ✅ REAL - Writer Playbook
-│   │   ├── layout.tsx
-│   │   ├── page.tsx
-│   │   └── globals.css
-│   ├── components/
-│   │   ├── Header.tsx
-│   │   ├── DateWeatherWidget.tsx     📦 PLACEHOLDER
-│   │   ├── ProspectingSection.tsx    ✅ REAL
-│   │   ├── CalendarWidget.tsx        ✅ REAL
-│   │   ├── OpportunitiesWidget.tsx   📦 PLACEHOLDER
-│   │   └── LoadingSpinner.tsx
-│   └── lib/
-│       └── microsoft-graph.ts        ✅ REAL
-├── .env.example
-├── package.json
-└── README.md
-```
-
-## API Endpoints
-
-### GET /api/calendar
-Returns today's calendar events from Outlook
-
-**Response:**
-```json
-[
-  {
-    "id": "event-id",
-    "subject": "Meeting title",
-    "start": { "dateTime": "2026-04-06T09:00:00", "timeZone": "EST" },
-    "end": { "dateTime": "2026-04-06T10:00:00", "timeZone": "EST" },
-    "location": { "displayName": "Conference Room A" },
-    "isOnlineMeeting": true,
-    "onlineMeetingUrl": "https://teams.microsoft.com/..."
-  }
-]
-```
-
-### GET /api/prospecting
-Returns current prospecting data from Writer Playbook
-
-**Response:**
-```json
-[
-  {
-    "id": "1",
-    "company": "Progressive Insurance",
-    "trigger": "Digital Transformation Initiative",
-    "description": "Details about the initiative...",
-    "source": "Insurance Business",
-    "publishedAt": "2026-04-06T08:00:00Z",
-    "relevantTo": "Claims Processing"
-  }
-]
-```
-
-### POST /api/prospecting
-Writer Playbook posts new prospecting data here
-
-**Headers:** `Authorization: Bearer YOUR_WRITER_API_KEY`
-
-**Body:** Array of prospect objects (see GET response format)
-
-## Development
-
-```bash
-# Run development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
-```
-
-## Adding Real Integrations Later
-
-When you're ready to connect Salesforce and weather APIs:
-
-1. **Weather**: 
-   - Get OpenWeatherMap API key
-   - Create `/api/weather` route
-   - Update `DateWeatherWidget.tsx` to fetch real data
-
-2. **Salesforce**:
-   - Add Salesforce credentials to `.env`
-   - Create `/api/opportunities` route
-   - Update `OpportunitiesWidget.tsx` to fetch real data
-
-The placeholder components are already structured to accept real data with minimal changes.
-
-## Troubleshooting
-
-### Calendar not loading
-- Verify your email matches your Microsoft 365 account
-- Check Azure AD app permissions are granted
-- Ensure client secret hasn't expired
-
-### Prospecting section empty
-- Verify Writer API key is correct
-- Check Writer Playbook is sending data to correct endpoint
-- Review console logs for API errors
-
-### Can't copy email to clipboard
-- Ensure you're using HTTPS (required for clipboard API)
-- Check browser permissions for clipboard access
-
-## Support
-
-For issues:
-1. Check console logs in browser DevTools
-2. Verify all required environment variables are set
-3. Test API endpoints directly with curl/Postman
-4. Review Azure AD and Writer API configurations
-
-## Deployment
-
-Ready to deploy to:
-- **Vercel** (recommended for Next.js)
-- **Azure App Service**
-- **Docker** (Dockerfile included in full version)
-
-When deploying, ensure:
-- All environment variables are set
-- Domain is HTTPS (required for clipboard)
-- CORS is configured for Writer Playbook
-- Azure AD redirect URIs are updated
+This project creates a website that can receive data from your Writer playbooks via webhooks. When your playbook runs, it will send data to your website automatically.
 
 ---
 
-**Built for ReSource Pro Sales Team** 🚀
+## 📦 COMPLETE SETUP GUIDE (For Beginners)
 
-**Status**: Production-ready for Prospecting + Calendar
-**Future**: Salesforce & Weather APIs when available
+### STEP 1: Get Your Files Ready
+
+1. **Download this project folder** to your computer
+2. You should have these files:
+   - `package.json`
+   - `pages/api/webhook.js`
+   - `pages/index.js`
+   - `.gitignore`
+   - `README.md` (this file)
+
+---
+
+### STEP 2: Create a GitHub Account & Repository
+
+#### 2.1 Create GitHub Account (if you don't have one)
+1. Go to https://github.com
+2. Click "Sign up"
+3. Follow the instructions
+
+#### 2.2 Create a New Repository
+1. Log into GitHub
+2. Click the **+** icon (top right) → **New repository**
+3. Fill in:
+   - Repository name: `writer-webhook-site`
+   - Description: `Webhook receiver for Writer playbooks`
+   - Choose **Public** (free)
+   - ✅ Check "Add a README file"
+4. Click **Create repository**
+
+#### 2.3 Upload Your Files
+1. On your new repository page, click **Add file** → **Upload files**
+2. Drag ALL the files from the `vercel-webhook-project` folder to the upload area
+3. Add a commit message: "Initial commit"
+4. Click **Commit changes**
+
+---
+
+### STEP 3: Deploy to Vercel
+
+#### 3.1 Create Vercel Account
+1. Go to https://vercel.com
+2. Click **Sign Up**
+3. Choose **Continue with GitHub**
+4. Authorize Vercel to access your GitHub
+
+#### 3.2 Import Your Project
+1. On Vercel dashboard, click **Add New...** → **Project**
+2. Find your `writer-webhook-site` repository
+3. Click **Import**
+4. Click **Deploy** (don't change any settings)
+5. Wait 1-2 minutes for deployment to complete
+6. You'll see **"Congratulations! 🎉"** when it's done
+
+#### 3.3 Get Your Webhook URL
+1. Click **Visit** to see your website
+2. Your webhook URL will be displayed on the page
+3. It looks like: `https://your-project-name.vercel.app/api/webhook`
+4. **Copy this URL** - you'll need it for Step 4
+
+---
+
+### STEP 4: Configure Your Writer Playbook
+
+#### 4.1 Create or Open Your Playbook
+1. Go to Writer (https://app.writer.com)
+2. Open the playbook you want to connect
+
+#### 4.2 Add Webhook Action
+1. In your playbook editor, add a new step
+2. Look for **webhook** or **HTTP request** action
+3. Configure it:
+   - **URL:** Paste your Vercel URL from Step 3.3
+   - **Method:** POST
+   - **Headers:** 
+     ```
+     Content-Type: application/json
+     ```
+   - **Body:** This will be your playbook output (usually set to send the result)
+
+#### 4.3 Test Your Playbook
+1. Run your playbook
+2. It should send data to your webhook
+3. Check Vercel logs to see if data was received:
+   - Go to Vercel dashboard
+   - Click on your project
+   - Click **Functions** tab
+   - Click on `/api/webhook`
+   - View the logs
+
+---
+
+### STEP 5: Test Your Webhook
+
+#### Option A: Test from Your Website
+1. Visit your deployed site: `https://your-project-name.vercel.app`
+2. Click the **"🧪 Send Test Request"** button
+3. You should see a success message
+
+#### Option B: Test with curl (Terminal/Command Line)
+```bash
+curl -X POST https://your-project-name.vercel.app/api/webhook \
+  -H "Content-Type: application/json" \
+  -d '{"test": "hello from terminal", "timestamp": "2024-01-01"}'
+```
+
+---
+
+## 🔍 How to View Incoming Data
+
+### View Logs in Vercel:
+1. Go to https://vercel.com/dashboard
+2. Click your project
+3. Click **Functions** tab
+4. Click `/api/webhook`
+5. You'll see all incoming requests
+
+### View Real-Time Logs:
+1. Open terminal/command line
+2. Install Vercel CLI:
+   ```bash
+   npm install -g vercel
+   ```
+3. Login to Vercel:
+   ```bash
+   vercel login
+   ```
+4. View live logs:
+   ```bash
+   vercel logs your-project-name.vercel.app --follow
+   ```
+
+---
+
+## 🛠️ Customization Options
+
+### Want to Save Data to a File?
+The current setup just logs data. To save it, you'll need a database:
+- Vercel KV (key-value store) - Simple, built into Vercel
+- MongoDB - Popular database
+- Supabase - Free PostgreSQL database
+
+### Want to Display Data on Your Site?
+Modify `pages/index.js` to fetch and display saved data.
+
+### Want to Send Email Notifications?
+Add an email service like:
+- SendGrid
+- Resend
+- Nodemailer
+
+---
+
+## ❓ Troubleshooting
+
+### Problem: "Cannot find module 'next'"
+**Solution:** You need to install dependencies locally:
+```bash
+cd vercel-webhook-project
+npm install
+```
+
+### Problem: Webhook returns 404
+**Solution:** Make sure your URL is exactly:
+`https://your-domain.vercel.app/api/webhook`
+
+### Problem: Data not showing in logs
+**Solution:**
+1. Check the URL is correct
+2. Make sure method is POST
+3. Check Vercel function logs
+4. Verify Writer playbook actually ran
+
+### Problem: Deployment fails
+**Solution:**
+1. Make sure all files are in the correct folders
+2. Check that `package.json` is in the root directory
+3. Try redeploying from Vercel dashboard
+
+---
+
+## 📚 Next Steps
+
+1. ✅ Test your webhook with the test button
+2. ✅ Run your Writer playbook and confirm data arrives
+3. ✅ Check Vercel logs to see the data
+4. 🎉 Customize the code to do what you want with the data!
+
+---
+
+## 📞 Need Help?
+
+- Vercel Documentation: https://vercel.com/docs
+- Next.js Documentation: https://nextjs.org/docs
+- Writer Documentation: https://dev.writer.com
+
+---
+
+## 🎉 You're Done!
+
+Your webhook is now live and ready to receive data from Writer playbooks!

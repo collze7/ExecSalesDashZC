@@ -1,0 +1,102 @@
+================================================================
+🚀 QUICK START - Writer Playbook Webhook Setup
+================================================================
+
+TOTAL TIME: 15-20 minutes
+DIFFICULTY: Beginner-friendly
+
+================================================================
+📋 WHAT YOU'LL NEED:
+================================================================
+1. A computer with internet
+2. An email address
+3. Your Writer account
+4. These project files (you have them!)
+
+================================================================
+⚡ SUPER QUICK STEPS:
+================================================================
+
+STEP 1: GITHUB (5 min)
+  □ Go to github.com
+  □ Sign up for free account
+  □ Click "New repository"
+  □ Name it: writer-webhook-site
+  □ Click "Create repository"
+  □ Click "Upload files"
+  □ Upload ALL files from this folder
+  □ Click "Commit changes"
+
+STEP 2: VERCEL (5 min)
+  □ Go to vercel.com
+  □ Click "Sign up with GitHub"
+  □ Click "Import Project"
+  □ Select "writer-webhook-site"
+  □ Click "Deploy"
+  □ Wait 2 minutes
+  □ Click "Visit" to see your site
+  □ COPY the webhook URL shown on your site
+
+STEP 3: WRITER PLAYBOOK (5 min)
+  □ Open your Writer playbook
+  □ Add webhook/HTTP action
+  □ Paste your Vercel URL
+  □ Set method to POST
+  □ Run playbook to test
+
+STEP 4: VERIFY (2 min)
+  □ Go to vercel.com/dashboard
+  □ Click your project
+  □ Click "Functions" tab
+  □ Check logs for incoming data
+
+================================================================
+✅ YOU'RE DONE!
+================================================================
+
+Your webhook is live at:
+https://your-project-name.vercel.app/api/webhook
+
+For detailed instructions, open:
+STEP_BY_STEP_GUIDE.md
+
+================================================================
+🆘 NEED HELP?
+================================================================
+
+Common Issues:
+- Can't deploy? → Check all files uploaded to GitHub
+- No data? → Check Writer playbook webhook URL is exact
+- 404 error? → Make sure URL ends with /api/webhook
+
+Full troubleshooting in STEP_BY_STEP_GUIDE.md
+
+================================================================
+📚 FILES IN THIS PROJECT:
+================================================================
+
+package.json              → Project configuration
+pages/index.js           → Your website homepage  
+pages/api/webhook.js     → Receives Writer data
+pages/_app.js            → Next.js requirement
+next.config.js           → Webhook settings
+.gitignore               → Files to ignore in Git
+README.md                → Full documentation
+STEP_BY_STEP_GUIDE.md    → Detailed walkthrough
+QUICK_START.txt          → This file!
+
+================================================================
+🎉 SUCCESS LOOKS LIKE:
+================================================================
+
+1. Your site is live on Vercel
+2. You can visit the URL
+3. You can click "Test Webhook" button
+4. Logs show your test request
+5. Writer playbook sends data successfully
+
+================================================================
+
+Good luck! You've got this! 🚀
+
+================================================================

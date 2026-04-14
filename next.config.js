@@ -1,22 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  images: {
-    domains: ['localhost', 'api.openweathermap.org'],
-    remotePatterns: [
+  // This ensures your API routes work correctly on Vercel
+  async headers() {
+    return [
       {
-        protocol: 'https',
-        hostname: '**',
+        // Allow webhook from any origin (Writer playbooks)
+        source: '/api/webhook',
+        headers: [
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+          { key: 'Access-Control-Allow-Methods', value: 'POST, OPTIONS' },
+          { key: 'Access-Control-Allow-Headers', value: 'Content-Type' },
+        ],
       },
-    ],
+    ];
   },
-  env: {
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-  },
-  webpack: (config) => {
-    config.externals = [...(config.externals || []), { canvas: 'canvas' }];
-    return config;
-  },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
