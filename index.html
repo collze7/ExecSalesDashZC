@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResourcePro Executive Dashboard</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            /* Colors - Cityscape Theme */
+            --bg-gradient-start: #0a1929;
+            --bg-gradient-mid: #1a2332;
+            --bg-gradient-end: #0f1419;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-shadow: rgba(0, 0, 0, 0.3);
+            
+            /* Accent Colors */
+            --primary: #3b82f6;
+            --primary-light: #60a5fa;
+            --secondary: #06b6d4;
+            --accent: #8b5cf6;
+            
+            /* Status Colors */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            
+            /* Text */
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            
+            /* Spacing - Tightened */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 0.75rem;
+            --spacing-lg: 1rem;
+            --spacing-xl: 1.25rem;
+            
+            /* Border Radius */
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            padding: var(--spacing-lg);
+            position: relative;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        /* Cityscape Background */
+        body::before {
+            content: '';
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: url('assets/cityscape-background.png') center bottom / cover no-repeat;
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Subtle stars effect */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.3), transparent),
+                radial-gradient(2px 2px at 60px 70px, rgba(255, 255, 255, 0.2), transparent),
+                radial-gradient(1px 1px at 50px 50px, rgba(255, 255, 255, 0.3), transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.2), transparent),
+                radial-gradient(2px 2px at 90px 10px, rgba(255, 255, 255, 0.25), transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.4;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1920px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Glass Card Style */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md);
+            box-shadow: 0 8px 32px var(--glass-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+        }
+
+        .glass-card.hover-3d {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .glass-card.hover-3d:hover {
+            transform: translateY(-4px);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .logo i {
+            color: var(--primary);
+        }
+
+        /* Search Bar */
+        .search-container {
+            flex: 1;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        /* Vertical Selector */
+        .vertical-selector {
+            display: flex;
+            gap: var(--spacing-xs);
+            background: var(--glass-bg);
+            padding: 0.25rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--glass-border);
+        }
+
+        .vertical-btn {
+            padding: 0.5rem 1.25rem;
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .vertical-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .vertical-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Date Time Display */
+        .datetime-display {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.25rem;
+        }
+
+        .current-time {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .current-date {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Stat Cards with 3D Effects */
+        .stat-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.08) 100%);
+            border-radius: var(--radius-lg);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px) rotateX(5deg);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(59, 130, 246, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.125rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-icon {
+            position: absolute;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.25;
+            z-index: 0;
+        }
+
+        .stat-icon i {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .stat-icon.blue {
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.3), transparent);
+            color: var(--primary);
+        }
+
+        .stat-icon.green {
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.3), transparent);
+            color: var(--success);
+        }
+
+        .stat-icon.purple {
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.3), transparent);
+            color: var(--accent);
+        }
+
+        .stat-icon.cyan {
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.3), transparent);
+            color: var(--secondary);
+        }
+
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            gap: var(--spacing-md);
+            grid-template-columns: 1fr;
+        }
+        
+        .top-row {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: var(--spacing-md);
+        }
+
+        /* Sidebar Panel */
+        .sidebar-panel {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+
+        .content-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-lg);
+        }
+
+        /* Card Headers */
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-sm);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .card-title i {
+            color: var(--primary);
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: var(--spacing-xs);
+        }
+
+        .icon-btn {
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Compact Calendar Widget - Ultra Small */
+        .calendar-widget {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-sm);
+            padding: var(--spacing-sm);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .calendar-month {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 0.125rem;
+        }
+
+        .calendar-nav .icon-btn {
+            padding: 0.125rem;
+            width: 20px;
+            height: 20px;
+        }
+
+        .calendar-nav .icon-btn i {
+            width: 12px;
+            height: 12px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .calendar-day.header {
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: default;
+            font-size: 0.55rem;
+        }
+
+        .calendar-day.current {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+        }
+
+        .calendar-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 1px;
+            width: 2px;
+            height: 2px;
+            background: var(--secondary);
+            border-radius: 50%;
+        }
+
+        .calendar-day:not(.header):not(.empty):hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .calendar-events {
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .calendar-event {
+            padding: 0.25rem;
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 2px solid var(--primary);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.25rem;
+        }
+
+        .calendar-event:last-child {
+            margin-bottom: 0;
+        }
+
+        .event-header {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            padding-bottom: 0.125rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .event-time {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            margin-bottom: 0.125rem;
+        }
+
+        .event-title {
+            font-size: 0.65rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        /* Email Commitments */
+        .commitment-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .commitment-item {
+            padding: var(--spacing-xs);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-xs);
+            transition: all 0.2s ease;
+        }
+
+        .commitment-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateX(2px);
+        }
+
+        .commitment-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--glass-border);
+            border-radius: 3px;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+            transition: all 0.2s ease;
+        }
+
+        .commitment-content {
+            flex: 1;
+        }
+
+        .commitment-text {
+            font-size: 0.75rem;
+            color: var(--text-primary);
+            margin-bottom: 0.125rem;
+            line-height: 1.3;
+        }
+
+        .commitment-meta {
+            display: flex;
+            gap: var(--spacing-xs);
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+        }
+
+        .priority-badge {
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.75rem;
+            font-size: 0.65rem;
+            font-weight: 500;
+        }
+
+        .priority-high {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .priority-medium {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .priority-low {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        /* News Triggers */
+        .news-filters {
+            display: flex;
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-sm);
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.375rem 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .filter-btn.active {
+            background: var(--secondary);
+            border-color: var(--secondary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3);
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--spacing-sm);
+        }
+
+        .news-card {
+            padding: var(--spacing-sm);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            transform-style: preserve-3d;
+        }
+
+        .news-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .news-source {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-bottom: 0.375rem;
+        }
+
+        .news-title {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.375rem;
+            line-height: 1.4;
+        }
+
+        .news-excerpt {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            margin-bottom: 0.5rem;
+        }
+
+        .news-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        .company-tag {
+            padding: 0.2rem 0.5rem;
+            background: rgba(59, 130, 246, 0.2);
+            border-radius: 1rem;
+            color: var(--primary-light);
+            font-weight: 500;
+            font-size: 0.65rem;
+        }
+
+        /* Salesforce Opportunities */
+        .opportunity-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .opportunity-card {
+            padding: var(--spacing-sm);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+        }
+
+        .opportunity-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateX(2px);
+        }
+
+        .opp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .opp-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.125rem;
+            line-height: 1.3;
+        }
+
+        .opp-company {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        .opp-amount {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--success);
+            text-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .opp-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-xs);
+            padding-top: var(--spacing-xs);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .opp-detail {
+            font-size: 0.7rem;
+        }
+
+        .opp-detail-label {
+            color: var(--text-muted);
+            margin-bottom: 0.1rem;
+            font-size: 0.65rem;
+        }
+
+        .opp-detail-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .stage-badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.75rem;
+            font-size: 0.65rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .stage-discovery {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--info);
+        }
+
+        .stage-proposal {
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--accent);
+        }
+
+        .stage-negotiation {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        /* Activity Timeline */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: var(--spacing-sm);
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0.875rem;
+            top: 2rem;
+            bottom: -0.5rem;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .timeline-item:last-child::before {
+            display: none;
+        }
+
+        .timeline-icon {
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            z-index: 1;
+        }
+
+        .timeline-icon i {
+            width: 0.875rem;
+            height: 0.875rem;
+        }
+
+        .timeline-icon.email {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--primary);
+        }
+
+        .timeline-icon.call {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .timeline-icon.meeting {
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--accent);
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-title {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.125rem;
+            line-height: 1.3;
+        }
+
+        .timeline-description {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+            line-height: 1.3;
+        }
+
+        .timeline-meta {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .content-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: var(--spacing-md);
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header-left {
+                flex-direction: column;
+            }
+
+            .search-container {
+                max-width: 100%;
+            }
+
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .opp-details {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .glass-card {
+            animation: slideIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <i data-lucide="building-2"></i>
+                    <span>ResourcePro</span>
+                </div>
+                
+                <div class="search-container">
+                    <i data-lucide="search" class="search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search accounts, contacts, opportunities..." id="globalSearch">
+                </div>
+
+                <div class="vertical-selector">
+                    <button class="vertical-btn active" data-vertical="all">All</button>
+                    <button class="vertical-btn" data-vertical="carrier">Carrier</button>
+                    <button class="vertical-btn" data-vertical="mga">MGA</button>
+                    <button class="vertical-btn" data-vertical="retail">Retail</button>
+                </div>
+            </div>
+
+            <div class="datetime-display">
+                <div class="current-time" id="currentTime">9:36 PM</div>
+                <div class="current-date" id="currentDate">Monday, April 13, 2026</div>
+            </div>
+        </header>
+
+        <!-- Stat Cards with 3D Effects -->
+        <div class="stat-cards">
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i data-lucide="target"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value">$1.2M</div>
+                    <div class="stat-label">Pipeline Value</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i data-lucide="trending-up"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Active Opportunities</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple">
+                    <i data-lucide="users"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value">45</div>
+                    <div class="stat-label">Prospect Accounts</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon cyan">
+                    <i data-lucide="calendar-check"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">This Week's Meetings</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Top Row: Calendar & News -->
+            <div class="top-row">
+                <!-- Compact Calendar Widget -->
+                <div class="glass-card hover-3d">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i data-lucide="calendar"></i>
+                            Today's Calls
+                        </h2>
+                    </div>
+
+                    <div class="calendar-widget">
+                        <div class="calendar-header">
+                            <div class="calendar-month" id="calendarMonth">April 2026</div>
+                            <div class="calendar-nav">
+                                <button class="icon-btn" id="prevMonth">
+                                    <i data-lucide="chevron-left"></i>
+                                </button>
+                                <button class="icon-btn" id="nextMonth">
+                                    <i data-lucide="chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="calendar-grid" id="calendarGrid">
+                            <!-- Calendar days will be generated by JavaScript -->
+                        </div>
+
+                        <div class="calendar-events">
+                            <div class="event-header">
+                                April 13
+                            </div>
+                            <div class="calendar-event">
+                                <div class="event-time">10:00 AM</div>
+                                <div class="event-title">Discovery - Pinnacle P&C</div>
+                            </div>
+                            <div class="calendar-event">
+                                <div class="event-time">2:00 PM</div>
+                                <div class="event-title">Negotiation - Summit MGA</div>
+                            </div>
+                            <div class="calendar-event">
+                                <div class="event-time">4:30 PM</div>
+                                <div class="event-title">Follow-up - Regional Mutual</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- News Triggers Section -->
+                <div class="glass-card hover-3d">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i data-lucide="newspaper"></i>
+                            News Triggers
+                        </h2>
+                        <div class="card-actions">
+                            <button class="icon-btn" title="Refresh">
+                                <i data-lucide="refresh-cw"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="news-filters">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="carrier">Carrier</button>
+                        <button class="filter-btn" data-filter="mga">MGA</button>
+                        <button class="filter-btn" data-filter="retail">Retail</button>
+                        <button class="filter-btn" data-filter="automation">AI</button>
+                        <button class="filter-btn" data-filter="compliance">Compliance</button>
+                    </div>
+
+                    <div class="news-grid">
+                        <div class="news-card" data-vertical="carrier" data-category="all">
+                            <div class="news-source">Insurance Journal • 3h ago</div>
+                            <div class="news-title">Pinnacle P&C Invests $50M in Claims Modernization</div>
+                            <div class="news-excerpt">Regional carrier plans to overhaul claims processing and expand capacity by 40%...</div>
+                            <div class="news-footer">
+                                <span class="company-tag">Pinnacle P&C</span>
+                                <span>Carrier</span>
+                            </div>
+                        </div>
+
+                        <div class="news-card" data-vertical="mga" data-category="automation">
+                            <div class="news-source">ReInsurance News • 5h ago</div>
+                            <div class="news-title">Summit MGA Partners for Underwriting Automation</div>
+                            <div class="news-excerpt">Mid-market MGA seeks 60% reduction in underwriting cycle time through AI...</div>
+                            <div class="news-footer">
+                                <span class="company-tag">Summit MGA</span>
+                                <span>MGA</span>
+                            </div>
+                        </div>
+
+                        <div class="news-card" data-vertical="carrier" data-category="all">
+                            <div class="news-source">Business Insurance • 1d ago</div>
+                            <div class="news-title">Regional Mutual Faces Audit Capacity Constraints</div>
+                            <div class="news-excerpt">25% policy growth straining premium audit turnaround times...</div>
+                            <div class="news-footer">
+                                <span class="company-tag">Regional Mutual</span>
+                                <span>Carrier</span>
+                            </div>
+                        </div>
+
+                        <div class="news-card" data-vertical="mga" data-category="all">
+                            <div class="news-source">Insurance Business • 1d ago</div>
+                            <div class="news-title">Northstar MGA Expands Southeast Operations</div>
+                            <div class="news-excerpt">Growing MGA adds underwriters, signals aggressive expansion plans...</div>
+                            <div class="news-footer">
+                                <span class="company-tag">Northstar MGA</span>
+                                <span>MGA</span>
+                            </div>
+                        </div>
+
+                        <div class="news-card" data-vertical="carrier" data-category="compliance">
+                            <div class="news-source">PropertyCasualty360 • 2d ago</div>
+                            <div class="news-title">Atlantic Underwriters Launches Compliance Training</div>
+                            <div class="news-excerpt">Commercial carrier rolls out regulatory program across 12 states...</div>
+                            <div class="news-footer">
+                                <span class="company-tag">Atlantic</span>
+                                <span>Carrier</span>
+                            </div>
+                        </div>
+
+                        <div class="news-card" data-vertical="carrier" data-category="all">
+                            <div class="news-source">Carrier Management • 2d ago</div>
+                            <div class="news-title">Midwest Carriers Reports Record WC Growth</div>
+                            <div class="news-excerpt">Regional carrier sees 35% increase, evaluating capacity needs...</div>
+                            <div class="news-footer">
+                                <span class="company-tag">Midwest</span>
+                                <span>Carrier</span>
+                            </div>
+                        </div>
+
+                        <div class="news-card" data-vertical="retail" data-category="all">
+                            <div class="news-source">Insurance Business • 2d ago</div>
+                            <div class="news-title">Coastal Brokers Network Acquires Three Agencies</div>
+                            <div class="news-excerpt">Regional retail network expanding footprint in Southeast markets...</div>
+                            <div class="news-footer">
+                                <span class="company-tag">Coastal Brokers</span>
+                                <span>Retail</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Commitments Row -->
+            <div class="glass-card hover-3d">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i data-lucide="mail"></i>
+                        Commitments
+                    </h2>
+                    <div class="card-actions">
+                        <button class="icon-btn" title="Add New">
+                            <i data-lucide="plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="commitment-list">
+                    <div class="commitment-item">
+                        <div class="commitment-checkbox"></div>
+                        <div class="commitment-content">
+                            <div class="commitment-text">BPO proposal to Pinnacle P&C</div>
+                            <div class="commitment-meta">
+                                <span><i data-lucide="clock" style="width: 10px; height: 10px; vertical-align: middle;"></i> Today</span>
+                                <span class="priority-badge priority-high">High</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="commitment-item">
+                        <div class="commitment-checkbox"></div>
+                        <div class="commitment-content">
+                            <div class="commitment-text">Follow up - Regional Mutual</div>
+                            <div class="commitment-meta">
+                                <span><i data-lucide="clock" style="width: 10px; height: 10px; vertical-align: middle;"></i> Tomorrow</span>
+                                <span class="priority-badge priority-medium">Med</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="commitment-item">
+                        <div class="commitment-checkbox"></div>
+                        <div class="commitment-content">
+                            <div class="commitment-text">Demo - Atlantic Underwriters</div>
+                            <div class="commitment-meta">
+                                <span><i data-lucide="clock" style="width: 10px; height: 10px; vertical-align: middle;"></i> Apr 15</span>
+                                <span class="priority-badge priority-medium">Med</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="commitment-item">
+                        <div class="commitment-checkbox"></div>
+                        <div class="commitment-content">
+                            <div class="commitment-text">Case study - Midwest Carriers</div>
+                            <div class="commitment-meta">
+                                <span><i data-lucide="clock" style="width: 10px; height: 10px; vertical-align: middle;"></i> Apr 16</span>
+                                <span class="priority-badge priority-low">Low</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="commitment-item">
+                        <div class="commitment-checkbox"></div>
+                        <div class="commitment-content">
+                            <div class="commitment-text">QBR prep - Northstar MGA</div>
+                            <div class="commitment-meta">
+                                <span><i data-lucide="clock" style="width: 10px; height: 10px; vertical-align: middle;"></i> Apr 18</span>
+                                <span class="priority-badge priority-medium">Med</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content: Opportunities & Activity -->
+
+                <!-- Bottom Row: Opportunities & Activity -->
+                <div class="content-row">
+                    <!-- Salesforce Opportunities -->
+                    <div class="glass-card hover-3d">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i data-lucide="trending-up"></i>
+                                Opportunities
+                            </h2>
+                            <div class="card-actions">
+                                <button class="icon-btn" title="View All">
+                                    <i data-lucide="external-link"></i>
+                                </button>
+                                <button class="icon-btn" title="Refresh">
+                                    <i data-lucide="refresh-cw"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="opportunity-list">
+                            <div class="opportunity-card" data-owner="zachary" data-vertical="carrier">
+                                <div class="opp-header">
+                                    <div>
+                                        <div class="opp-title">BPO - Claims Processing</div>
+                                        <div class="opp-company">Pinnacle P&C</div>
+                                    </div>
+                                    <div class="opp-amount">$450K</div>
+                                </div>
+                                <div class="opp-details">
+                                    <div class="opp-detail">
+                                        <div class="opp-detail-label">Stage</div>
+                                        <div class="opp-detail-value"><span class="stage-badge stage-proposal">Proposal</span></div>
+                                    </div>
+                                    <div class="opp-detail">
+                                        <div class="opp-detail-label">Close</div>
+                                        <div class="opp-detail-value">May 15</div>
+                                    </div>
+                                    <div class="opp-detail">
+                                        <div class="opp-detail-label">Probability</div>
+                                        <div class="opp-detail-value">65%</div>
+                                    </div>
+                                    <div class="opp-detail">
+                                        <div class="opp-detail-label">Owner</div>
+                                        <div class="opp-detail-value">Zachary Collins</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="opportunity-card" data-owner="robyn" data-vertical="mga">
+                                <div class="opp-header">
+                                    <div>
+                                        <div class="opp-title">Underwriting Platform Modernization</div>
+                                        <div class="opp-company">Summit MGA</div>
+                                    </div>
+                                    <div class="opp-amount">$385K</div>
+                                </div>
+                                <div class="opp-details">
+                                    <div class="opp-detail">
+                                        <div class="opp-detail-label">Stage</div>
+                                        <div class="opp-detail-value"><span class="stage-badge stage-negotiation">Negotiation</span></div>
+                                    </div>
+                                    <div class="opp-detail">
+                                        <div class="opp-detail-label">Close</div>
+                                        <div class="opp-detail-value">May 1</div>
+                                    </div>
+                                    <div class="opp-detail">
+                                        <div class="opp-detail-label">Probability</div>
+                                        <div class="opp-detail-value">75%</div>
+                                    </div>
+                                    <div class="opp-detail">
+                                        <div class="opp-detail-label">Owner</div>
+                                        <div class="opp-detail-value">Robyn</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="opportunity-card" data-owner="zachary" data-vertical="carrier">
+                                <div class="opp-header">
+                                    <div>
+                                        <div class="opp-title">Compliance Training & Support</div>
+                                        <div class="opp-company">Atlantic Underwriters</div>
+                                    </div>
+                                    <div class="opp-amount">$180K</div>
+                                </div>
+                                <div class="opp-details">
+                                    <div class="opp-detail">
+                                        <div class="opp-detail-label">Stage</div>
+                                        <div class="opp-detail-value"><span class="stage-badge stage-proposal">Proposal</span></div>
+                                    </div>
+                                    <div class="opp-detail">
+                                        <div class="opp-detail-label">Close</div>
+                                        <div class="opp-detail-value">Apr 30</div>
+                                    </div>
+                                    <div class="opp-detail">
+                                        <div class="opp-detail-label">Probability</div>
+                                        <div class="opp-detail-value">55%</div>
+                                    </div>
+                                    <div class="opp-detail">
+                                        <div class="opp-detail-label">Owner</div>
+                                        <div class="opp-detail-value">Zachary Collins</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="opportunity-card" data-owner="robyn" data-vertical="mga">
+                                <div class="opp-header">
+                                    <div>
+                                        <div class="opp-title">Premium Audit Services</div>
+                                        <div class="opp-company">Northstar MGA</div>
+                                    </div>
+                                    <div class="opp-amount">$295K</div>
+                                </div>
+                                <div class="opp-details">
+                                    <div class="opp-detail">
+                                        <div class="opp-detail-label">Stage</div>
+                                        <div class="opp-detail-value"><span class="stage-badge stage-discovery">Discovery</span></div>
+                                    </div>
+                                    <div class="opp-detail">
+                                        <div class="opp-detail-label">Close</div>
+                                        <div class="opp-detail-value">Jun 15</div>
+                                    </div>
+                                    <div class="opp-detail">
+                                        <div class="opp-detail-label">Probability</div>
+                                        <div class="opp-detail-value">45%</div>
+                                    </div>
+                                    <div class="opp-detail">
+                                        <div class="opp-detail-label">Owner</div>
+                                        <div class="opp-detail-value">Robyn</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity History Timeline -->
+                    <div class="glass-card hover-3d">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i data-lucide="activity"></i>
+                                Activity History
+                            </h2>
+                            <div class="card-actions">
+                                <button class="icon-btn" title="View All">
+                                    <i data-lucide="external-link"></i>
+                                </button>
+                                <button class="icon-btn" title="Refresh">
+                                    <i data-lucide="refresh-cw"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="timeline">
+                            <div class="timeline-item" data-owner="zachary" data-vertical="carrier">
+                                <div class="timeline-icon call">
+                                    <i data-lucide="phone"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Call: Discovery - Pinnacle P&C</div>
+                                    <div class="timeline-description">Claims processing capacity discussion with COO</div>
+                                    <div class="timeline-meta">Today, 10:00 AM • Zachary Collins</div>
+                                </div>
+                            </div>
+
+                            <div class="timeline-item" data-owner="robyn" data-vertical="mga">
+                                <div class="timeline-icon call">
+                                    <i data-lucide="phone"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Call: Summit MGA Negotiation</div>
+                                    <div class="timeline-description">Final pricing discussion for underwriting platform</div>
+                                    <div class="timeline-meta">Today, 2:00 PM • Robyn</div>
+                                </div>
+                            </div>
+
+                            <div class="timeline-item" data-owner="zachary" data-vertical="carrier">
+                                <div class="timeline-icon email">
+                                    <i data-lucide="mail"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Email: BPO Proposal Sent</div>
+                                    <div class="timeline-description">Comprehensive proposal to Pinnacle P&C with ROI analysis</div>
+                                    <div class="timeline-meta">Yesterday, 5:30 PM • Zachary Collins</div>
+                                </div>
+                            </div>
+
+                            <div class="timeline-item" data-owner="robyn" data-vertical="mga">
+                                <div class="timeline-icon meeting">
+                                    <i data-lucide="video"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Meeting: Northstar MGA Discovery</div>
+                                    <div class="timeline-description">Premium audit services scoping session</div>
+                                    <div class="timeline-meta">Yesterday, 3:00 PM • Robyn</div>
+                                </div>
+                            </div>
+
+                            <div class="timeline-item" data-owner="zachary" data-vertical="carrier">
+                                <div class="timeline-icon call">
+                                    <i data-lucide="phone"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Call: Atlantic Underwriters Follow-up</div>
+                                    <div class="timeline-description">Compliance training demo scheduled for next week</div>
+                                    <div class="timeline-meta">Apr 12, 4:15 PM • Zachary Collins</div>
+                                </div>
+                            </div>
+
+                            <div class="timeline-item" data-owner="robyn" data-vertical="mga">
+                                <div class="timeline-icon email">
+                                    <i data-lucide="mail"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Email: Summit MGA Contract Review</div>
+                                    <div class="timeline-description">Sent updated SOW with revised timelines</div>
+                                    <div class="timeline-meta">Apr 11, 11:30 AM • Robyn</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Update date and time
+        function updateDateTime() {
+            const now = new Date();
+            const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', timeOptions);
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', dateOptions);
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 60000);
+
+        // Generate Calendar - Show current week with focus on today
+        function generateCalendar() {
+            const today = new Date(2026, 3, 13); // April 13, 2026 (Sunday)
+            const year = today.getFullYear();
+            const month = today.getMonth();
+            
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'];
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            
+            document.getElementById('calendarMonth').textContent = `${dayNames[today.getDay()]}, ${monthNames[month]} ${today.getDate()}`;
+            
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+            
+            // Get the current week (Sunday to Saturday)
+            const currentDay = today.getDay(); // 0 = Sunday
+            const weekStart = new Date(today);
+            weekStart.setDate(today.getDate() - currentDay);
+            
+            // Add day headers
+            const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+            days.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'calendar-day header';
+                dayHeader.textContent = day;
+                grid.appendChild(dayHeader);
+            });
+            
+            // Add week days
+            for (let i = 0; i < 7; i++) {
+                const dayDate = new Date(weekStart);
+                dayDate.setDate(weekStart.getDate() + i);
+                
+                const dayCell = document.createElement('div');
+                dayCell.className = 'calendar-day';
+                dayCell.textContent = dayDate.getDate();
+                
+                // Highlight today
+                if (dayDate.toDateString() === today.toDateString()) {
+                    dayCell.classList.add('current');
+                }
+                
+                // Mark days with calls
+                const daysWithCalls = [13, 15, 18]; // Today (13), Tuesday (15), Friday (18)
+                if (daysWithCalls.includes(dayDate.getDate())) {
+                    dayCell.classList.add('has-event');
+                }
+                
+                grid.appendChild(dayCell);
+            }
+        }
+        generateCalendar();
+
+        // Vertical selector - Filter all content by vertical
+        document.querySelectorAll('.vertical-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.vertical-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const vertical = this.dataset.vertical;
+                
+                // Get currently active news category filter
+                const activeCategory = document.querySelector('.filter-btn.active').dataset.filter;
+                
+                // Filter news cards by both vertical and category
+                document.querySelectorAll('.news-card').forEach(card => {
+                    const cardVertical = card.dataset.vertical;
+                    const cardCategory = card.dataset.category;
+                    
+                    const verticalMatch = vertical === 'all' || cardVertical === vertical;
+                    const categoryMatch = activeCategory === 'all' || cardCategory === activeCategory || cardCategory === 'all';
+                    
+                    if (verticalMatch && categoryMatch) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // Filter opportunities
+                document.querySelectorAll('.opportunity-card').forEach(card => {
+                    if (vertical === 'all' || card.dataset.vertical === vertical) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // Filter activity timeline
+                document.querySelectorAll('.timeline-item').forEach(item => {
+                    if (vertical === 'all' || item.dataset.vertical === vertical) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                // Update stat cards based on filtered data
+                updateStatCards(vertical);
+            });
+        });
+        
+        // Update stat cards based on vertical filter
+        function updateStatCards(vertical) {
+            const statsMap = {
+                'all': { pipeline: '$1.3M', opps: 4, accounts: 45, meetings: 8 },
+                'carrier': { pipeline: '$630K', opps: 2, accounts: 18, meetings: 3 },
+                'mga': { pipeline: '$680K', opps: 2, accounts: 22, meetings: 4 },
+                'retail': { pipeline: '$0', opps: 0, accounts: 5, meetings: 1 }
+            };
+            
+            const stats = statsMap[vertical] || statsMap['all'];
+            const statCards = document.querySelectorAll('.stat-card');
+            
+            if (statCards[0]) statCards[0].querySelector('.stat-value').textContent = stats.pipeline;
+            if (statCards[1]) statCards[1].querySelector('.stat-value').textContent = stats.opps;
+            if (statCards[2]) statCards[2].querySelector('.stat-value').textContent = stats.accounts;
+            if (statCards[3]) statCards[3].querySelector('.stat-value').textContent = stats.meetings;
+        }
+
+        // News filters - Category filtering
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const category = this.dataset.filter;
+                
+                // Get currently active vertical
+                const activeVertical = document.querySelector('.vertical-btn.active').dataset.vertical;
+                
+                // Filter news cards by both vertical and category
+                document.querySelectorAll('.news-card').forEach(card => {
+                    const cardVertical = card.dataset.vertical;
+                    const cardCategory = card.dataset.category;
+                    
+                    const verticalMatch = activeVertical === 'all' || cardVertical === activeVertical;
+                    const categoryMatch = category === 'all' || cardCategory === category || cardCategory === 'all';
+                    
+                    if (verticalMatch && categoryMatch) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Global search
+        document.getElementById('globalSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            console.log('Search:', searchTerm);
+        });
+
+        // Commitment checkboxes
+        document.querySelectorAll('.commitment-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('click', function() {
+                this.classList.toggle('checked');
+                if (this.classList.contains('checked')) {
+                    this.innerHTML = '<i data-lucide="check" style="width: 14px; height: 14px; color: var(--success);"></i>';
+                    this.style.background = 'var(--success)';
+                    this.style.borderColor = 'var(--success)';
+                    lucide.createIcons();
+                } else {
+                    this.innerHTML = '';
+                    this.style.background = 'transparent';
+                    this.style.borderColor = 'var(--glass-border)';
+                }
+            });
+        });
+
+        // Calendar navigation
+        document.getElementById('prevMonth').addEventListener('click', generateCalendar);
+        document.getElementById('nextMonth').addEventListener('click', generateCalendar);
+
+        // Refresh functionality
+        document.querySelectorAll('[title="Refresh"]').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const card = this.closest('.glass-card');
+                card.classList.add('loading');
+                setTimeout(() => {
+                    card.classList.remove('loading');
+                }, 800);
+            });
+        });
+        
+        // External link functionality
+        document.querySelectorAll('[title="View All"]').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const card = this.closest('.glass-card');
+                const title = card.querySelector('.card-title').textContent.trim();
+                
+                // Simulate opening external link
+                console.log(`Opening: ${title} - Full View`);
+                
+                // Show visual feedback
+                this.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 200);
+                
+                // In production, this would link to Salesforce, email client, etc.
+                alert(`This would open the full ${title} view in your CRM/email system`);
+            });
+        });
+        
+        // Add New button functionality
+        document.querySelectorAll('[title="Add New"]').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                console.log('Opening new commitment form');
+                
+                // Show visual feedback
+                this.style.transform = 'rotate(90deg) scale(1.1)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 200);
+                
+                alert('This would open a form to add a new commitment');
+            });
+        });
+        
+        // News card click functionality
+        document.querySelectorAll('.news-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const title = this.querySelector('.news-title').textContent;
+                console.log(`Opening news article: ${title}`);
+                alert(`This would open the full article:\n\n"${title}"`);
+            });
+        });
+        
+        // Opportunity card click functionality
+        document.querySelectorAll('.opportunity-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const title = this.querySelector('.opp-title').textContent;
+                const company = this.querySelector('.opp-company').textContent;
+                console.log(`Opening opportunity: ${title} - ${company}`);
+                alert(`This would open the Salesforce opportunity:\n\n${title}\n${company}`);
+            });
+        });
+        
+        // Timeline item click functionality
+        document.querySelectorAll('.timeline-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const title = this.querySelector('.timeline-title').textContent;
+                console.log(`Opening activity: ${title}`);
+                alert(`This would open the full activity details:\n\n${title}`);
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('globalSearch').focus();
+            }
+        });
+
+        // 3D card tilt effect on mouse move
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (y - centerY) / 10;
+                const rotateY = (centerX - x) / 10;
+                
+                this.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+            });
+        });
+
+        console.log('ResourcePro Executive Dashboard loaded successfully!');
+    </script>
+</body>
+</html>
